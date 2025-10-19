@@ -4,3 +4,6 @@ spring:
     import: optional:configserver:http://localhost:8080
   application:
     name: discovery-service
+
+server:
+  port: 8888
