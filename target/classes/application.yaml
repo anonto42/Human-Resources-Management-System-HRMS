@@ -11,10 +11,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-#  security:
-#    user:
-#      name: admin@mail.com
-#      password: admin123
 
 application:
   security:
@@ -23,10 +19,13 @@ application:
       expiration: 86400000 # 24 hours in milliseconds
       refresh-token:
         expiration: 604800000 # 7 days in milliseconds
+    otp:
+      expiration: 300  # 5 minutes in seconds
+      length: 6
   admin:
     email: ${ADMIN_EMAIL:superadmin@hrms.com}
     password: ${ADMIN_PASSWORD:SuperAdmin@123}
-    name: ${ADMIN_NAME:"System Super Admin"}
+    name: ${ADMIN_NAME:System Super Admin}
 
 cors:
   allowed-origins: "http://localhost:3000,http://localhost:4200"
