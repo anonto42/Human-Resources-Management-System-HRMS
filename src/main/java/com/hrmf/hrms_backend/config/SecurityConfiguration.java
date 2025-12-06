@@ -37,7 +37,11 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints
                         .requestMatchers(
-                                "/api/v1/auth/**",
+                                "/api/v1/auth/login",
+                                "/api/v1/auth/forgot-password",
+                                "/api/v1/auth/verify-otp",
+                                "/api/v1/auth/reset-password",
+                                "/api/v1/auth/refresh-token",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/error"
@@ -71,13 +75,16 @@ public class SecurityConfiguration {
                                 UserRole.EMPLOYEE.name()
                         )
 
-                        // User endpoints (for self-management)
-                        .requestMatchers("/api/v1/users/me/**")
-                        .authenticated()
-                        .requestMatchers("/api/v1/users/**")
+                        .requestMatchers(
+                                "/api/v1/auth/logout",
+                                "/api/v1/auth/change-password",
+                                "/api/v1/users/me/**"
+                        )
                         .hasAnyAuthority(
                                 UserRole.SUPER_ADMIN.name(),
-                                UserRole.SUB_ADMIN.name()
+                                UserRole.SUB_ADMIN.name(),
+                                UserRole.EMPLOYER.name(),
+                                UserRole.EMPLOYEE.name()
                         )
 
                         // Any other request must be authenticated
