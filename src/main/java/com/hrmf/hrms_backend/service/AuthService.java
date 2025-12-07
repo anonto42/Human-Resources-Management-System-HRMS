@@ -44,7 +44,7 @@ public class AuthService {
 
         // Authenticate user
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(data.getEmail(), data.getPassword())
+                new UsernamePasswordAuthenticationToken(data.getEmail().toLowerCase().trim(), data.getPassword())
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
