@@ -10,4 +10,5 @@ public class AddEmployeeResponseDto {
     private String gender;
     private String email;
     private UserRole role;
+    private String employeeRole;
 }
