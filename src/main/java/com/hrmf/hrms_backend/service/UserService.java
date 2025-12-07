@@ -157,14 +157,14 @@ public class UserService {
         return userRepository.findByRole(role);
     }
 
-    public List<User> getUsersByStatus(UserStatus status) {
+    public List<User> getUsersByStatus(UserStatus status, Pageable page) {
         log.debug("Fetching users by status: {}", status);
 
         if (status == null) {
             throw new ValidationException("Status cannot be null");
         }
 
-        return userRepository.findByStatus(status);
+        return userRepository.findByStatus(status, page);
     }
 
     public boolean existsByEmail(String email) {
@@ -245,8 +245,8 @@ public class UserService {
         return userRepository.findByEmailContainingIgnoreCase(emailPattern.trim());
     }
 
-    public List<User> getActiveUsers() {
-        return userRepository.findByStatus(UserStatus.ACTIVE);
+    public List<User> getActiveUsers(Pageable page) {
+        return userRepository.findByStatus(UserStatus.ACTIVE, page);
     }
 
     @Transactional
