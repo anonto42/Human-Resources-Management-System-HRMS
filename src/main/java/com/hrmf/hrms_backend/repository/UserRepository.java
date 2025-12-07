@@ -19,7 +19,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByEmail(String email);
     boolean existsByEmail(String email);
     boolean existsByEmailAndIdNot(String email, UUID id);
-    List<User> findByRole(UserRole role);
     List<User> findByStatus(UserStatus status);
     Optional<User> findByRefreshToken(String refreshToken);
     long countByStatus(UserStatus status);
@@ -28,8 +27,19 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     @Query("SELECT u FROM User u WHERE u.role IN :roles")
     List<User> findByRoles(@Param("roles") List<UserRole> roles);
 
-    Page<User> findByRole(UserRole role, Pageable pageable);
-
     @Query("SELECT COUNT(u) FROM User u WHERE u.status = :status AND u.role = :role")
     long countByStatusAndRole(@Param("status") UserStatus status, @Param("role") UserRole role);
+
+    Page<User> findByRole(UserRole role, Pageable pageable);
+
+    List<User> findByRole(UserRole role);
+
+    Optional<User> findByIdAndRole(UUID id, UserRole role);
+
+    Optional<User> findByEmailAndRole(String email, UserRole role);
+
+    long countByRole(UserRole role);
+
+    long countByRoleAndStatus(UserRole role, UserStatus status);
+
 }
