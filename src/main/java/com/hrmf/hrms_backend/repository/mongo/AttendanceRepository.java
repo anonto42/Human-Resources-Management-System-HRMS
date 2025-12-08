@@ -30,20 +30,5 @@ public interface AttendanceRepository extends MongoRepository<Attendance, String
     Page<Attendance> findByEmployerIdAndApprovalStatus(String employerId, String approvalStatus, Pageable pageable);
 
     // Find by status
-    List<Attendance> findByEmployerIdAndStatus(String employerId, String status);
-
-    // Weekly summary for user
-    @Query(value = "{'userId': ?0, 'attendanceDate': {$gte: ?1, $lte: ?2}}")
-    List<Attendance> findWeeklyAttendance(String userId, LocalDate startOfWeek, LocalDate endOfWeek);
-
-    // Monthly summary for user
-    @Query(value = "{'userId': ?0, 'attendanceDate': {$gte: ?1, $lte: ?2}}",
-            sort = "{'attendanceDate': 1}")
-    List<Attendance> findMonthlyAttendance(String userId, LocalDate startOfMonth, LocalDate endOfMonth);
-
-    // Count by status for a user in date range
-    long countByUserIdAndStatusAndAttendanceDateBetween(String userId, String status, LocalDate startDate, LocalDate endDate);
-
-    // Check if user has attendance for a date
-    boolean existsByUserIdAndAttendanceDate(String userId, LocalDate date);
+    Page<Attendance> findByEmployerIdAndStatus(String employerId, String status, Pageable pageable);
 }
