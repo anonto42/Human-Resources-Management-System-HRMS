@@ -1,6 +1,7 @@
 package com.hrmf.hrms_backend.util;
 
 import com.hrmf.hrms_backend.entity.User;
+import com.hrmf.hrms_backend.enums.UserRole;
 import com.hrmf.hrms_backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -16,6 +17,13 @@ import java.util.UUID;
 public class SecurityUtil {
 
     private final UserRepository userRepository;
+
+    public boolean canManageAttendance() {
+        User currentUser = getCurrentUser().orElseThrow( () -> new RuntimeException("This error was come's from the security util's"));
+        return currentUser != null &&
+                (currentUser.getRole() == UserRole.EMPLOYEE ||
+                        currentUser.getRole() == UserRole.EMPLOYER);
+    }
 
     public Optional<User> getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
