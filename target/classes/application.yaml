@@ -53,7 +53,7 @@ spring:
     resources:
       static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:${file.upload-dir}
 
-  # Disable static resource handling for API paths
+  # Disable static resource
   mvc:
     static-path-pattern: /static/**
 
