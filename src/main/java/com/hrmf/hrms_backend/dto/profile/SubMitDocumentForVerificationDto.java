@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
@@ -31,6 +32,9 @@ public class SubMitDocumentForVerificationDto {
     @NotNull(message = "Expiry date is required")
     private LocalDate expiryDate;
 
-    @NotBlank(message = "Document url is required")
-    private String documentUrl;
+//    @NotBlank(message = "Document url is required")
+//    private String documentUrl;
+
+    @NotNull(message = "Document file is required")
+    private MultipartFile documentFile;
 }
