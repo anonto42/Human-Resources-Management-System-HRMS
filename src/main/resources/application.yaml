@@ -28,6 +28,37 @@ spring:
 #      database: hrms
       auto-index-creation: true
 
+  # Mail Server Config
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_ADDRESS_USERNAME:anontom90@gmail.com}
+    password: ${MAIL_APP_PASSWORD:ksd slkd lkd}
+    properties:
+      mail:
+        smtp:
+          auth: true
+        starttls:
+          enable: true
+
+  # Upload Configuration
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      file-size-threshold: 2KB
+
+  # Create uploads directory
+  web:
+    resources:
+      static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:${file.upload-dir}
+
+# File storage directory
+file:
+  upload-dir: uploads
+app:
+  base-url: http://localhost:8080
+
 application:
   security:
     jwt:
