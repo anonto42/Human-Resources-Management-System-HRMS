@@ -212,7 +212,7 @@ public class ProfileController {
         return ResponseEntity.ok(response);
     }
 
-    // Document Verification (Right to Work)
+    // Document Verification
     @PostMapping("/document-verification/submit")
     public ResponseEntity<?> submitDocumentForVerification(
             @Valid @RequestBody SubMitDocumentForVerificationDto request) {

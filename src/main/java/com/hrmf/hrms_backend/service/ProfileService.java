@@ -547,6 +547,15 @@ public class ProfileService {
     public DocumentVerificationResponse submitDocumentForVerification(SubMitDocumentForVerificationDto request) {
         User user = securityUtil.getCurrentUserOrThrow();
 
+        documentVerificationRepository.findByUserAndVerificationStatus(user, VerificationStatus.PENDING)
+                .orElseThrow(()-> new CustomException("Your right to work data was already exist on pending status", HttpStatus.ALREADY_REPORTED));
+
+        documentVerificationRepository.findByUserAndVerificationStatus(user, VerificationStatus.APPROVED)
+                .orElseThrow(()-> new CustomException("Your right to work data was already exist on approved status", HttpStatus.ALREADY_REPORTED));
+
+        documentVerificationRepository.findByUserAndVerificationStatus(user, VerificationStatus.UNDER_REVIEW)
+                .orElseThrow(()-> new CustomException("Your right to work data was already exist on under review status", HttpStatus.ALREADY_REPORTED));
+
         DocumentVerification documentVerification = DocumentVerification.builder()
                 .user(user)
                 .employeeName(request.getEmployeeName())
