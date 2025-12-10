@@ -461,7 +461,6 @@ public class ProfileService {
                 .startDate(request.getStartDate())
                 .endDate(request.getEndDate())
                 .expiryDate(request.getExpiryDate())
-                .isCurrent(request.getExpiryDate() == null || request.getExpiryDate().isAfter(LocalDate.now()))
                 .build();
 
         TrainingDetails saved = trainingDetailsRepository.save(trainingDetails);
@@ -484,7 +483,6 @@ public class ProfileService {
         trainingDetails.setStartDate(request.getStartDate());
         trainingDetails.setEndDate(request.getEndDate());
         trainingDetails.setExpiryDate(request.getExpiryDate());
-        trainingDetails.setIsCurrent(request.getExpiryDate() == null || request.getExpiryDate().isAfter(LocalDate.now()));
 
         TrainingDetails saved = trainingDetailsRepository.save(trainingDetails);
 
@@ -772,8 +770,6 @@ public class ProfileService {
                 .startDate(details.getStartDate() != null ? details.getStartDate().toString() : null)
                 .endDate(details.getEndDate() != null ? details.getEndDate().toString() : null)
                 .expiryDate(details.getExpiryDate() != null ? details.getExpiryDate().toString() : null)
-                .isCurrent(details.getIsCurrent())
-                .createdAt(details.getCreatedAt())
                 .build();
     }
 

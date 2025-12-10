@@ -40,9 +40,6 @@ public class TrainingDetails {
     @Column(name = "expiry_date")
     private LocalDate expiryDate;
 
-    @Column(name = "is_current")
-    private Boolean isCurrent = false;
-
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

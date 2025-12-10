@@ -156,14 +156,14 @@ public class ProfileController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/visa-passport-details/passport")
+    @PutMapping("/visa-passport-details/passport")
     public ResponseEntity<?> createOrUpdatePassport(
             @Valid @RequestBody UpdatePassportDetailsDto request) {
         var response = profileService.createOrUpdatePassport(request);
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/visa-passport-details/visa")
+    @PutMapping("/visa-passport-details/visa")
     public ResponseEntity<?> createOrUpdateVisa(
             @Valid @RequestBody UpdateVisaDetailsDto request) {
         var response = profileService.createOrUpdateVisa(request);

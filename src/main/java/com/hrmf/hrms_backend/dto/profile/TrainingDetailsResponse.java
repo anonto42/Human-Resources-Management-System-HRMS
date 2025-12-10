@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Data
 @Builder
 @NoArgsConstructor
@@ -18,6 +16,4 @@ public class TrainingDetailsResponse {
     private String startDate;
     private String endDate;
     private String expiryDate;
-    private Boolean isCurrent;
-    private LocalDateTime createdAt;
 }
