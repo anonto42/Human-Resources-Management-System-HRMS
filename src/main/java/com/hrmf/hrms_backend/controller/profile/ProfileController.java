@@ -4,6 +4,7 @@ import com.hrmf.hrms_backend.dto.profile.*;
 import com.hrmf.hrms_backend.service.ProfileService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -156,16 +157,18 @@ public class ProfileController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/visa-passport-details/passport")
+    @PutMapping(value = "/visa-passport-details/passport",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createOrUpdatePassport(
-            @Valid @RequestBody UpdatePassportDetailsDto request) {
+            @Valid @ModelAttribute UpdatePassportDetailsDto request) {
         var response = profileService.createOrUpdatePassport(request);
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/visa-passport-details/visa")
+    @PutMapping(value = "/visa-passport-details/visa",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createOrUpdateVisa(
-            @Valid @RequestBody UpdateVisaDetailsDto request) {
+            @Valid @ModelAttribute UpdateVisaDetailsDto request) {
         var response = profileService.createOrUpdateVisa(request);
         return ResponseEntity.ok(response);
     }

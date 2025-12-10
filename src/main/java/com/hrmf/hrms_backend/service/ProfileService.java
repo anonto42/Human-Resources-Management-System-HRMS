@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -27,7 +28,6 @@ public class ProfileService {
     private final PersonalDetailsRepository personalDetailsRepository;
     private final IdentityDocumentRepository identityDocumentRepository;
     private final NationalDetailsRepository nationalDetailsRepository;
-    private final AddressRepository addressRepository;
     private final ContactRepository contactInformationRepository;
     private final EmergencyContactRepository emergencyContactRepository;
     private final EducationDetailsRepository educationDetailsRepository;
@@ -410,9 +410,11 @@ public class ProfileService {
         passport.setIsCurrent(request.getIsCurrent());
 
         // Handle document files if needed
-        if (request.getDocument() != null && request.getDocument().length > 0) {
+        if (request.getDocuments() != null && request.getDocuments().length > 0) {
+            List<String> uploadedFileUrls = uploadPassportDocuments(request.getDocuments(), user);
             Map<String, Object> documentFiles = new HashMap<>();
-            documentFiles.put("documents", Arrays.asList(request.getDocument()));
+            documentFiles.put("documents", uploadedFileUrls);
+            documentFiles.put("count", uploadedFileUrls.size());
             passport.setDocumentFiles(documentFiles);
         }
 
@@ -433,16 +435,21 @@ public class ProfileService {
                         .build());
 
         visa.setNationality(request.getNationality());
-        visa.setCountry(request.getCountry());
+        visa.setShareCode(request.getShareCode());
+        visa.setImmigrationStatus(request.getImmigrationStatus());
+        visa.setCountry(request.getCountryResidency());
         visa.setIssuedBy(request.getIssueBy());
         visa.setIssueDate(request.getIssueDate());
         visa.setExpiryDate(request.getExpDate());
         visa.setIsCurrent(request.getIsCurrentVisa());
+        visa.setCountryResidency(request.getCountryResidency());
 
         // Handle document files if needed
         if (request.getDocuments() != null && request.getDocuments().length > 0) {
+            List<String> uploadedFileUrls = uploadVisaDocuments(request.getDocuments(), user);
             Map<String, Object> documentFiles = new HashMap<>();
-            documentFiles.put("documents", Arrays.asList(request.getDocuments()));
+            documentFiles.put("documents", uploadedFileUrls);
+            documentFiles.put("count", uploadedFileUrls.size());
             visa.setDocumentFiles(documentFiles);
         }
 
@@ -608,6 +615,91 @@ public class ProfileService {
         return personalDetailsRepository.findByUser(user)
                 .map(this::convertToPersonalDetailsResponse)
                 .orElse(null);
+    }
+
+    private List<String> uploadPassportDocuments(MultipartFile[] files, User user) {
+        List<String> fileUrls = new ArrayList<>();
+        String folderPath = "passports/" + user.getId();
+
+        for (int i = 0; i < files.length; i++) {
+            MultipartFile file = files[i];
+            try {
+                // Validate file
+                validateDocumentFile(file, "Passport document");
+
+                // Store file
+                String fileName = fileStorageService.storeFile(file, folderPath);
+                String fileUrl = fileStorageService.getFileUrl(fileName, folderPath);
+                fileUrls.add(fileUrl);
+
+                log.debug("Uploaded passport document {} for user {}: {}",
+                        i + 1, user.getEmail(), fileName);
+
+            } catch (Exception e) {
+                log.error("Failed to upload passport document {} for user {}: {}",
+                        i + 1, user.getEmail(), e.getMessage());
+                throw new CustomException(
+                        "Failed to upload passport document " + (i + 1) + ": " + e.getMessage(),
+                        HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        return fileUrls;
+    }
+
+    private List<String> uploadVisaDocuments(MultipartFile[] files, User user) {
+        List<String> fileUrls = new ArrayList<>();
+        String folderPath = "visas/" + user.getId();
+
+        for (int i = 0; i < files.length; i++) {
+            MultipartFile file = files[i];
+            try {
+                // Validate file
+                validateDocumentFile(file, "Visa document");
+
+                // Store file
+                String fileName = fileStorageService.storeFile(file, folderPath);
+                String fileUrl = fileStorageService.getFileUrl(fileName, folderPath);
+                fileUrls.add(fileUrl);
+
+                log.debug("Uploaded visa document {} for user {}: {}",
+                        i + 1, user.getEmail(), fileName);
+
+            } catch (Exception e) {
+                log.error("Failed to upload visa document {} for user {}: {}",
+                        i + 1, user.getEmail(), e.getMessage());
+                throw new CustomException(
+                        "Failed to upload visa document " + (i + 1) + ": " + e.getMessage(),
+                        HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        return fileUrls;
+    }
+
+    private void validateDocumentFile(MultipartFile file, String documentType) {
+        if (file.isEmpty()) {
+            throw new CustomException(documentType + " file is empty", HttpStatus.BAD_REQUEST);
+        }
+
+        // Check file size (max 5MB per document)
+        if (file.getSize() > 5 * 1024 * 1024) {
+            throw new CustomException(
+                    documentType + " file size exceeds maximum limit of 5MB",
+                    HttpStatus.BAD_REQUEST);
+        }
+
+        // Check file type
+        String contentType = file.getContentType();
+        if (contentType == null ||
+                (!contentType.startsWith("image/") &&
+                        !contentType.equals("application/pdf") &&
+                        !contentType.equals("application/msword") &&
+                        !contentType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document"))) {
+            throw new CustomException(
+                    documentType + " file type not allowed. Allowed types: Images, PDF, Word documents",
+                    HttpStatus.BAD_REQUEST);
+        }
     }
 
     private NationalIdDetailsResponse getNationalIdDetailsResponse(User user) {
@@ -776,6 +868,18 @@ public class ProfileService {
     }
 
     private IdentityDocumentResponse convertToIdentityDocumentResponse(IdentityDocument document) {
+        List<String> documentUrls = new ArrayList<>();
+        Integer documentCount = 0;
+
+        // Extract document URLs from documentFiles map
+        if (document.getDocumentFiles() != null) {
+            Object docs = document.getDocumentFiles().get("documents");
+            if (docs instanceof List) {
+                documentUrls = (List<String>) docs;
+                documentCount = documentUrls.size();
+            }
+        }
+
         return IdentityDocumentResponse.builder()
                 .id(document.getId().toString())
                 .documentType(document.getDocumentType().name())
@@ -786,7 +890,11 @@ public class ProfileService {
                 .issueDate(document.getIssueDate() != null ? document.getIssueDate().toString() : null)
                 .expiryDate(document.getExpiryDate() != null ? document.getExpiryDate().toString() : null)
                 .isCurrent(document.getIsCurrent())
-                .createdAt(document.getCreatedAt())
+                .shareCode(document.getShareCode())
+                .immigrationStatus(document.getImmigrationStatus())
+                .countryResidency(document.getCountryResidency())
+                .documentUrls(documentUrls)
+                .documentCount(documentCount)
                 .build();
     }
 

@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -20,6 +20,10 @@ public class IdentityDocumentResponse {
     private String issuedBy;
     private String issueDate;
     private String expiryDate;
+    private String shareCode;
+    private String immigrationStatus;
+    private String countryResidency;
     private Boolean isCurrent;
-    private LocalDateTime createdAt;
+    private List<String> documentUrls;
+    private Integer documentCount;
 }
