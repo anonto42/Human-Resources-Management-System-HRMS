@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PersonalDetailsResponse {
-    private String id;
+    public String id;
     private String about;
     private String employerCode;
     private String niNo;

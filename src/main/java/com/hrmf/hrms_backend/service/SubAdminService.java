@@ -303,12 +303,12 @@ public class SubAdminService {
         List<EmergencyContactDto> emergencyContactDtos = user.getEmergencyContacts().stream()
                 .map(contact -> EmergencyContactDto.builder()
                         .id(contact.getId())
-                        .fullName(contact.getFullName())
-                        .relationship(contact.getRelationship())
-                        .contactNumber(contact.getContactNumber())
+                        .name(contact.getName())
                         .email(contact.getEmail())
                         .address(contact.getAddress())
-                        .additionalDetails(contact.getAdditionalDetails())
+                        .relationship(contact.getRelation())
+                        .contactNumber(contact.getEmergencyContact())
+                        .additionalDetails(contact.getAddress())
                         .build())
                 .collect(Collectors.toList());
 

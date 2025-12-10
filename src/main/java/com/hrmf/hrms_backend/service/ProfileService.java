@@ -45,7 +45,7 @@ public class ProfileService {
                 .personalDetails(getPersonalDetailsResponse(user))
                 .nationalIdDetails(getNationalIdDetailsResponse(user))
                 .contactInformation(getContactInformationResponse(user))
-                .emergencyDetails(getEmergencyDetailsResponse(user))
+//                .emergencyDetails(getEmergencyDetailsResponse(user))
                 .educationDetails(getEducationDetailsResponse(user))
                 .jobDetails(getJobDetailsResponse(user))
                 .serviceDetails(getServiceDetailsResponse(user))
@@ -194,65 +194,34 @@ public class ProfileService {
         User user = securityUtil.getCurrentUserOrThrow();
 
         // Find first emergency contact or create new one
-        List<EmergencyContact> existingContacts = emergencyContactRepository.findByUser(user);
-        EmergencyContact emergencyContact;
+        EmergencyContact emergencyContact = emergencyContactRepository.findByUser(user)
+                .orElse(EmergencyContact.builder()
+                        .user(user)
+                        .build()
+                );
 
-        if (existingContacts.isEmpty()) {
-            emergencyContact = EmergencyContact.builder()
-                    .user(user)
-                    .build();
-        } else {
-            emergencyContact = existingContacts.get(0);
-        }
-
-        emergencyContact.setFullName(request.getName());
-        emergencyContact.setRelationship(request.getRelation());
-        emergencyContact.setContactNumber(request.getEmergencyContact());
         emergencyContact.setEmail(request.getEmail());
         emergencyContact.setAddress(request.getAddress());
-        emergencyContact.setAdditionalDetails(request.getGiveDetails());
+        emergencyContact.setName(request.getName());
+        emergencyContact.setRelation(request.getRelation());
+        emergencyContact.setGiveDetails(request.getGiveDetails());
+        emergencyContact.setEmergencyContact(request.getEmergencyContact());
+        emergencyContact.setTitleOfCertifiedLicense(request.getTitleOfCertifiedLicense());
+        emergencyContact.setLicenseNumber(request.getLicenseNumber());
+        emergencyContact.setIssueDate(LocalDate.parse(request.getIssueDate()));
+        emergencyContact.setExpiryDate(LocalDate.parse(request.getExpiryDate()));
 
         EmergencyContact saved = emergencyContactRepository.save(emergencyContact);
 
         return convertToEmergencyDetailsResponse(saved);
     }
 
-    @Transactional
-    public List<EmergencyDetailsResponse> addEmergencyContact(UpdateEmergencyDetailsDto request) {
-        User user = securityUtil.getCurrentUserOrThrow();
-
-        EmergencyContact emergencyContact = EmergencyContact.builder()
-                .user(user)
-                .fullName(request.getName())
-                .relationship(request.getRelation())
-                .contactNumber(request.getEmergencyContact())
-                .email(request.getEmail())
-                .address(request.getAddress())
-                .additionalDetails(request.getGiveDetails())
-                .build();
-
-        EmergencyContact saved = emergencyContactRepository.save(emergencyContact);
-
-        return getEmergencyDetailsResponse(user);
-    }
-
-    @Transactional
-    public void removeEmergencyContact(UUID id) {
-        User user = securityUtil.getCurrentUserOrThrow();
-        EmergencyContact emergencyContact = emergencyContactRepository.findById(id)
-                .orElseThrow(() -> new CustomException("Emergency contact not found", HttpStatus.NOT_FOUND));
-
-        if (!emergencyContact.getUser().getId().equals(user.getId())) {
-            throw new CustomException("You can only remove your own emergency contacts", HttpStatus.FORBIDDEN);
-        }
-
-        emergencyContactRepository.delete(emergencyContact);
-    }
-
     @Transactional(readOnly = true)
-    public List<EmergencyDetailsResponse> getEmergencyDetails() {
+    public EmergencyDetailsResponse getEmergencyDetails() {
         User user = securityUtil.getCurrentUserOrThrow();
-        return getEmergencyDetailsResponse(user);
+        EmergencyContact emergencyContact = emergencyContactRepository.findByUser(user)
+                .orElseThrow(() -> new CustomException("Emergency details are not found!", HttpStatus.NOT_FOUND));
+        return convertToEmergencyDetailsResponse(emergencyContact);
     }
 
     @Transactional
@@ -634,12 +603,6 @@ public class ProfileService {
                 .orElse(null);
     }
 
-    private List<EmergencyDetailsResponse> getEmergencyDetailsResponse(User user) {
-        return emergencyContactRepository.findByUser(user).stream()
-                .map(this::convertToEmergencyDetailsResponse)
-                .collect(Collectors.toList());
-    }
-
     private List<EducationDetailsResponse> getEducationDetailsResponse(User user) {
         return educationDetailsRepository.findByUserOrderByCreatedAtDesc(user).stream()
                 .map(this::convertToEducationDetailsResponse)
@@ -733,12 +696,16 @@ public class ProfileService {
     private EmergencyDetailsResponse convertToEmergencyDetailsResponse(EmergencyContact contact) {
         return EmergencyDetailsResponse.builder()
                 .id(contact.getId().toString())
-                .fullName(contact.getFullName())
-                .relationship(contact.getRelationship())
-                .contactNumber(contact.getContactNumber())
+                .name(contact.getName())
+                .relation(contact.getRelation())
+                .giveDetails(contact.getGiveDetails())
                 .email(contact.getEmail())
+                .emergencyContact(contact.getEmergencyContact())
                 .address(contact.getAddress())
-                .additionalDetails(contact.getAdditionalDetails())
+                .titleOfCertifiedLicense(contact.getTitleOfCertifiedLicense())
+                .licenseNumber(contact.getLicenseNumber())
+                .issueDate(contact.getIssueDate().toString())
+                .expiryDate(contact.getExpiryDate().toString())
                 .build();
     }
 

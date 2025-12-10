@@ -3,6 +3,7 @@ package com.hrmf.hrms_backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -21,17 +22,28 @@ public class EmergencyContact {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "full_name", nullable = false)
-    private String fullName;
+    @Column(name = "name", nullable = false)
+    private String name;
 
-    private String relationship;
+    public String relation;
 
-    @Column(name = "contact_number", nullable = false)
-    private String contactNumber;
+    @Column(name = "give_details")
+    public String giveDetails;
+    public String email;
 
-    private String email;
-    private String address;
+    @Column(name = "emergency_contact")
+    public String emergencyContact;
+    public String address;
 
-    @Column(name = "additional_details", columnDefinition = "TEXT")
-    private String additionalDetails;
+    @Column(name = "title_of_certified_license")
+    public String titleOfCertifiedLicense;
+
+    @Column(name = "license_number")
+    public String licenseNumber;
+
+    @Column(name = "issue_date")
+    public LocalDate issueDate;
+
+    @Column(name = "expiry_date")
+    public LocalDate expiryDate;
 }

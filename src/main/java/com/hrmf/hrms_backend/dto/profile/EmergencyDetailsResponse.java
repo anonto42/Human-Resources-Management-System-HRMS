@@ -10,11 +10,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EmergencyDetailsResponse {
-    private String id;
-    private String fullName;
-    private String relationship;
-    private String contactNumber;
-    private String email;
-    private String address;
-    private String additionalDetails;
+    public String id;
+    public String name;
+    public String relation;
+    public String giveDetails;
+    public String email;
+    public String emergencyContact;
+    public String address;
+    public String titleOfCertifiedLicense;
+    public String licenseNumber;
+    public String issueDate;
+    public String expiryDate;
 }

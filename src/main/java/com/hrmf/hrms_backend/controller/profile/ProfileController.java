@@ -72,24 +72,11 @@ public class ProfileController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/emergency-details")
+    @PutMapping("/emergency-details")
     public ResponseEntity<?> createOrUpdateEmergencyDetails(
             @Valid @RequestBody UpdateEmergencyDetailsDto request) {
         var response = profileService.createOrUpdateEmergencyDetails(request);
         return ResponseEntity.ok(response);
-    }
-
-    @PostMapping("/emergency-details/add")
-    public ResponseEntity<?> addEmergencyContact(
-            @Valid @RequestBody UpdateEmergencyDetailsDto request) {
-        var response = profileService.addEmergencyContact(request);
-        return ResponseEntity.ok(response);
-    }
-
-    @DeleteMapping("/emergency-details/{id}")
-    public ResponseEntity<?> removeEmergencyContact(@PathVariable UUID id) {
-        profileService.removeEmergencyContact(id);
-        return ResponseEntity.ok("Emergency contact removed successfully");
     }
 
     // Education Details

@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class EmergencyContactDto {
     private UUID id;
-    private String fullName;
+    private String name;
     private String relationship;
     private String contactNumber;
     private String email;
