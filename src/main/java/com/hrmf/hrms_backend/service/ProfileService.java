@@ -26,6 +26,7 @@ public class ProfileService {
     private final UserRepository userRepository;
     private final PersonalDetailsRepository personalDetailsRepository;
     private final IdentityDocumentRepository identityDocumentRepository;
+    private final NationalDetailsRepository nationalDetailsRepository;
     private final AddressRepository addressRepository;
     private final EmergencyContactRepository emergencyContactRepository;
     private final EducationDetailsRepository educationDetailsRepository;
@@ -108,22 +109,24 @@ public class ProfileService {
         User user = securityUtil.getCurrentUserOrThrow();
 
         // Find existing national ID document
-        IdentityDocument nationalId = identityDocumentRepository
-                .findFirstByUserAndDocumentType(user, DocumentType.NATIONAL_ID)
-                .orElse(IdentityDocument.builder()
+        NationalDetails nationalId = nationalDetailsRepository
+                .findFirstByUser(user)
+                .orElse(NationalDetails.builder()
                         .user(user)
-                        .documentType(DocumentType.NATIONAL_ID)
+                        .nationalIdNumber(request.getNationalIdNumber())
+                        .nationality(request.getNationality())
+                        .countryOfResidence(request.getCountryOfResidence())
+                        .issueDate(request.getIssueDate())
+                        .expiryDate(request.getExpiryDate())
+                        .documentName(request.getDocumentName())
+                        .documentRefNumber(request.getDocumentRefNumber())
+                        .otherDocumentIssueDate(request.getOtherDocumentIssueDate())
+                        .otherDocumentExpiryDate(request.getExpiryDate())
                         .build());
 
-        nationalId.setDocumentNumber(request.getNationalIdNumber());
-        nationalId.setNationality(request.getNationality());
-        nationalId.setCountry(request.getCountryOfResidence());
-        nationalId.setIssuedBy(request.getDocumentName());
-        nationalId.setIssueDate(request.getIssueDate());
-        nationalId.setExpiryDate(request.getExpiryDate());
-        nationalId.setIsCurrent(true);
 
-        IdentityDocument saved = identityDocumentRepository.save(nationalId);
+
+        NationalDetails saved = nationalDetailsRepository.save(nationalId);
 
         return convertToNationalIdDetailsResponse(saved);
     }
@@ -131,8 +134,8 @@ public class ProfileService {
     @Transactional(readOnly = true)
     public NationalIdDetailsResponse getNationalIdDetails() {
         User user = securityUtil.getCurrentUserOrThrow();
-        IdentityDocument nationalId = identityDocumentRepository
-                .findFirstByUserAndDocumentType(user, DocumentType.NATIONAL_ID)
+        NationalDetails nationalId = nationalDetailsRepository
+                .findFirstByUser(user)
                 .orElseThrow(() -> new CustomException("National ID details not found", HttpStatus.NOT_FOUND));
 
         return convertToNationalIdDetailsResponse(nationalId);
@@ -605,13 +608,13 @@ public class ProfileService {
     }
 
     private NationalIdDetailsResponse getNationalIdDetailsResponse(User user) {
-        List<IdentityDocument> nationalIds = identityDocumentRepository.findByUserAndDocumentType(user, DocumentType.NATIONAL_ID);
+        List<NationalDetails> nationalIds = nationalDetailsRepository.findByUser(user);
 
         if (nationalIds.isEmpty()) {
             return null;
         }
 
-        IdentityDocument nationalId = nationalIds.get(0);
+        NationalDetails nationalId = nationalIds.get(0);
         return convertToNationalIdDetailsResponse(nationalId);
     }
 
@@ -687,18 +690,18 @@ public class ProfileService {
                 .build();
     }
 
-    private NationalIdDetailsResponse convertToNationalIdDetailsResponse(IdentityDocument document) {
+    private NationalIdDetailsResponse convertToNationalIdDetailsResponse(NationalDetails document) {
         return NationalIdDetailsResponse.builder()
                 .id(document.getId().toString())
-                .documentType(document.getDocumentType().name())
-                .documentNumber(document.getDocumentNumber())
+                .nationalIdNumber(document.getNationalIdNumber())
                 .nationality(document.getNationality())
-                .country(document.getCountry())
-                .issuedBy(document.getIssuedBy())
-                .issueDate(document.getIssueDate() != null ? document.getIssueDate().toString() : null)
-                .expiryDate(document.getExpiryDate() != null ? document.getExpiryDate().toString() : null)
-                .isCurrent(document.getIsCurrent())
-                .createdAt(document.getCreatedAt())
+                .countryOfResidence(document.getCountryOfResidence())
+                .issueDate(document.getIssueDate())
+                .expiryDate(document.getExpiryDate())
+                .documentName(document.getDocumentName())
+                .documentRefNumber(document.getDocumentRefNumber())
+                .otherDocumentIssueDate(document.getOtherDocumentIssueDate())
+                .otherDocumentExpiryDate(document.getExpiryDate())
                 .build();
     }
 

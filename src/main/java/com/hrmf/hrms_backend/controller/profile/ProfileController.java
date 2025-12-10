@@ -44,7 +44,7 @@ public class ProfileController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/national-details")
+    @PutMapping("/national-details")
     public ResponseEntity<NationalIdDetailsResponse> createOrUpdateNationalIdDetails(
             @Valid @RequestBody UpdateNationalIdDetails request) {
         NationalIdDetailsResponse response = profileService.createOrUpdateNationalIdDetails(request);

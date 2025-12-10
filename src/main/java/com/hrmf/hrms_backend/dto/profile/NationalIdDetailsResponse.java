@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -13,13 +13,13 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class NationalIdDetailsResponse {
     private String id;
-    private String documentType;
-    private String documentNumber;
+    private String nationalIdNumber;
     private String nationality;
-    private String country;
-    private String issuedBy;
-    private String issueDate;
-    private String expiryDate;
-    private Boolean isCurrent;
-    private LocalDateTime createdAt;
+    private String countryOfResidence;
+    private LocalDate issueDate;
+    private LocalDate expiryDate;
+    private String documentName;
+    private String documentRefNumber;
+    private LocalDate otherDocumentIssueDate;
+    private LocalDate otherDocumentExpiryDate;
 }
