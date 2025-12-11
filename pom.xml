@@ -128,6 +128,10 @@
             <configuration>
                 <source>21</source>
                 <target>21</target>
+                <compilerArgs>
+                    <arg>--release</arg>
+                    <arg>21</arg>
+                </compilerArgs>
                 <annotationProcessorPaths>
                     <path>
                         <groupId>org.projectlombok</groupId>
