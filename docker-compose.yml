@@ -35,8 +35,8 @@ services:
       SPRING_DATASOURCE_PASSWORD: postgres
       SPRING_DATA_MONGODB_URI: mongodb://mongo_db:27017/hrms
     depends_on:
-      - postgres_db
-      - mongo_db
+      - postgres
+      - mongo
     networks:
       - app-network
 
