@@ -34,7 +34,7 @@ services:
 
   hrms_backend:
     build: .
-    image: anonto/hrms-backend:latest
+#    image: anonto/hrms-backend:latest
     container_name: hrms_backend
     ports:
       - "8080:8080"
@@ -51,7 +51,6 @@ services:
       ADMIN_PASSWORD: SuperAdmin@123
       ADMIN_NAME: System Super Admin
       ALLOWED_ORIGINS: "*"
-    restart: unless-stopped
     volumes:
       - ./logs:/app/logs
       - ./config:/app/config
