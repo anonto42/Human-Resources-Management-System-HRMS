@@ -29,31 +29,23 @@ public class PaySlipsController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/paginated")
+    @GetMapping
     public ResponseEntity<PaginationResponse<ResponsePaySlipe>> getPaySlipsPaginated(
             @RequestParam(required = false) String monthYear,
             @RequestParam(required = false) String department,
+            @RequestParam(required = false) String search,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String sortDirection
     ) {
         PaginationResponse<ResponsePaySlipe> response = paySlipsService.getPaySlipsByEmployer(
-                monthYear, department, page, size, sortBy, sortDirection);
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<ResponsePaySlipe>> getPaySlips(
-            @RequestParam(required = false) String monthYear,
-            @RequestParam(required = false) String department
-    ) {
-        List<ResponsePaySlipe> response = paySlipsService.getPaySlipsByEmployer(monthYear, department);
+                monthYear, department, search, page, size, sortBy, sortDirection);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponsePaySlipe> getPaySlipById(@PathVariable UUID id) {
+    public ResponseEntity<ResponsePaySlipe> getPaySlipById(@PathVariable String id) {
         ResponsePaySlipe response = paySlipsService.getPaySlipById(id);
         return ResponseEntity.ok(response);
     }
