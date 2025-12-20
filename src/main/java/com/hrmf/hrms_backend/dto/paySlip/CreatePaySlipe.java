@@ -13,8 +13,8 @@ public class CreatePaySlipe {
     @NotBlank(message = "You must give the name of employee name")
     private String employeeName;
 
-    @NotBlank(message = "You must give the id of the employee")
-    private String employeeId;
+    @NotBlank(message = "You must give the id of the User")
+    private String userId;
 
     @NotBlank(message = "You must give the job category")
     private String jobCategory;
