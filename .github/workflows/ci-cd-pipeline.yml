@@ -72,8 +72,8 @@ jobs:
           echo "Waiting for PostgreSQL and database 'hrmf_test' to be ready..."
           for i in {1..30}; do
           # Check if database exists
-          if PGPASSWORD=test_pass psql -h localhost -U test_user -d hrmf_test -c "SELECT 1" >/dev/null 2>&1; then
-          echo "✅ Database 'hrmf_test' is ready!"
+          if PGPASSWORD=testpass psql -h localhost -U testuser -d testdb -c "SELECT 1" >/dev/null 2>&1; then
+          echo "✅ Database 'testdb' is ready!"
           break
           fi
           echo "Database not ready yet... attempt $i/30"
