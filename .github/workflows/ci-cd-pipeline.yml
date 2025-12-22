@@ -80,7 +80,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: anonto42/hrms-backend  # Changed: No ghcr.io prefix
+          images: anonto/hrms-backend
           tags: |
             type=raw,value=latest
             type=sha,format=short
