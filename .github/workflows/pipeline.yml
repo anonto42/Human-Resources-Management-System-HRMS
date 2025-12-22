@@ -206,9 +206,9 @@ jobs:
           context: .
           push: true
           tags: |
-            anonto42/hrms-backend:latest
-            anonto42/hrms-backend:${{ env.VERSION }}
-            anonto42/hrms-backend:${{ github.sha }}
+            anonto/hrms-backend:latest
+            anonto/hrms-backend:${{ env.VERSION }}
+            anonto/hrms-backend:${{ github.sha }}
           labels: |
             org.opencontainers.image.version=${{ env.VERSION }}
             org.opencontainers.image.revision=${{ github.sha }}
@@ -217,7 +217,7 @@ jobs:
 
       - name: Generate deployment payload
         run: |
-          echo "IMAGE_TAG=anonto42/hrms-backend:${{ env.VERSION }}" >> $GITHUB_ENV
+          echo "IMAGE_TAG=anonto/hrms-backend:${{ env.VERSION }}" >> $GITHUB_ENV
           echo "VERSION=${{ env.VERSION }}" >> $GITHUB_ENV
           echo "TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_ENV
 
