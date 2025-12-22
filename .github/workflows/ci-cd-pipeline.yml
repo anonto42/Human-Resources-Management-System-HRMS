@@ -69,7 +69,7 @@ jobs:
 
       - name: Wait for PostgreSQL to be ready
         run: |
-          echo "Waiting for PostgreSQL and database 'hrmf_test' to be ready..."
+          echo "Waiting for PostgreSQL and database 'testdb' to be ready..."
           for i in {1..30}; do
           # Check if database exists
           if PGPASSWORD=testpass psql -h localhost -U testuser -d testdb -c "SELECT 1" >/dev/null 2>&1; then
@@ -96,8 +96,8 @@ jobs:
         run: |
           mvn clean verify \
             spotbugs:check \
-            -Dspring.datasource.url=jdbc:postgresql://localhost:5432/hrmf_test \
-            -Dspring.data.mongodb.uri=mongodb://localhost:27017/hrms_test
+            -Dspring.datasource.url=jdbc:postgresql://localhost:5432/testdb \
+            -Dspring.data.mongodb.uri=mongodb://localhost:27017/testdb
         env:
           MAVEN_OPTS: "-Duser.home=${{ runner.temp }}"
           SPRING_PROFILES_ACTIVE: test
@@ -201,6 +201,7 @@ jobs:
         run: |
           echo "🎯 Built image: anonto42/hrms-backend:${{ github.sha }}"
           echo "📦 Image pushed to Docker Hub"
+
 
   # Job 3: Deploy to Production (Zero-downtime)
 #  deploy-production:
