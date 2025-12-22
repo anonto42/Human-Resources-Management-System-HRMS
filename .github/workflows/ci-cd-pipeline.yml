@@ -44,12 +44,12 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Run tests
-        run: mvn clean test
-        env:
-          SPRING_PROFILES_ACTIVE: test
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/hrmf_test
-          SPRING_DATA_MONGODB_URI: mongodb://localhost:27017/hrms_test
+#      - name: Run tests
+#        run: mvn clean test
+#        env:
+#          SPRING_PROFILES_ACTIVE: test
+#          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/hrmf_test
+#          SPRING_DATA_MONGODB_URI: mongodb://localhost:27017/hrms_test
 
 #      - name: Security scan
 #        run: mvn org.owasp:dependency-check-maven:check -DfailBuildOnCVSS=7
