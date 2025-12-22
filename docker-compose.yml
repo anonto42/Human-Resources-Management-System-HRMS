@@ -15,7 +15,7 @@ services:
       - app-network
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./backups/postgres:/backups
+#      - ./backups/postgres:/backups
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s
@@ -33,7 +33,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
     volumes:
       - mongo_data:/data/db
-      - ./backups/mongo:/backups
+#      - ./backups/mongo:/backups
     networks:
       - app-network
     command: >
@@ -42,9 +42,9 @@ services:
       --wiredTigerCacheSizeGB 1
 
   hrms_backend:
-    image: ${DOCKER_IMAGE}
+    image: ${DOCKER_IMAGE:-anonto/hrms-backend:latest}
     container_name: hrms_backend
-    restart: unless-stopped
+#    restart: unless-stopped
     ports:
       - "${APP_PORT:-8080}:8080"
     env_file:
@@ -85,17 +85,17 @@ services:
 
 volumes:
   postgres_data:
-    driver: local
-    driver_opts:
-      type: none
-      device: ${VOLUME_PATH}/data/postgres
-      o: bind
+#    driver: local
+#    driver_opts:
+#      type: none
+#      device: ${VOLUME_PATH}/data/postgres
+#      o: bind
   mongo_data:
-    driver: local
-    driver_opts:
-      type: none
-      device: ${VOLUME_PATH}/data/mongo
-      o: bind
+#    driver: local
+#    driver_opts:
+#      type: none
+#      device: ${VOLUME_PATH}/data/mongo
+#      o: bind
 
 networks:
   app-network:
