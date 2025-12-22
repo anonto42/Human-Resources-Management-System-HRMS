@@ -249,7 +249,7 @@ jobs:
             cd ~/hrms-deployment
 
             echo "🔄 Updating Docker image in .env file..."
-            sed -i "s|DOCKER_IMAGE=.*|DOCKER_IMAGE=ghcr.io/${{ github.repository }}:${{ github.sha }}|" .env
+            sed -i "s|DOCKER_IMAGE=.*|DOCKER_IMAGE=anonto/hrms_backend:latest" .env
 
             echo "📝 Current .env DOCKER_IMAGE:"
             grep DOCKER_IMAGE .env
@@ -267,19 +267,3 @@ jobs:
               echo "❌ Deployment failed!"
               exit 1
             fi
-#
-#      - name: Send deployment notification
-#        if: success()
-#        uses: rtCamp/action-slack-notify@v2
-#        env:
-#          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-#          SLACK_MESSAGE: "✅ Production Deployment Successful!\n• App: HRMS Backend\n• Version: ${{ github.sha }}\n• Time: $(date -u)"
-#          SLACK_COLOR: "good"
-#
-#      - name: Send failure notification
-#        if: failure()
-#        uses: rtCamp/action-slack-notify@v2
-#        env:
-#          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-#          SLACK_MESSAGE: "❌ Production Deployment Failed!\n• App: HRMS Backend\n• Commit: ${{ github.sha }}\n• Check GitHub Actions"
-#          SLACK_COLOR: "danger"
