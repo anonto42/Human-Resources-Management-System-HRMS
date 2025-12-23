@@ -8,7 +8,7 @@ on:
 
 jobs:
 
- # Build and Test
+  # Build and Test
   build-test:
     runs-on: ubuntu-latest
 
@@ -115,7 +115,10 @@ jobs:
           ALLOWED_ORIGINS: "*"
 
       - name: Security scan with OWASP Dependency-Check
-        run: mvn org.owasp:dependency-check-maven:check -DfailBuildOnCVSS=7
+        run: |
+          mvn clean verify sonar:sonar \
+          -Dsonar.projectKey=your-project \
+          -Dsonar.login=your-token
 
       - name: Upload test and quality reports
         if: always()

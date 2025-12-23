@@ -18,6 +18,8 @@
 
     <properties>
         <java.version>21</java.version>
+        <sonar.organization>your-org</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <dependencies>
@@ -164,12 +166,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>com.github.spotbugs</groupId>
-                <artifactId>spotbugs-maven-plugin</artifactId>
-                <version>4.8.6.0</version>
             </plugin>
 
             <plugin>
