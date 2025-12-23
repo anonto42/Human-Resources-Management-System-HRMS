@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/api/v1/files")
@@ -60,7 +61,6 @@ public class FileController {
         }
     }
 
-    // Internal method to handle file download
     private ResponseEntity<Resource> downloadFileInternal(String folder, String filename, HttpServletRequest request) {
         try {
             // Get file path
@@ -102,10 +102,8 @@ public class FileController {
         }
     }
 
-    // Determine content type based on file extension
     private String determineContentType(String filename, HttpServletRequest request) {
         try {
-            // Try to get from file system
             Path filePath = Paths.get(filename);
             String contentType = Files.probeContentType(filePath);
 
@@ -113,25 +111,26 @@ public class FileController {
                 return contentType;
             }
         } catch (IOException ignored) {
-            // Ignore and try other methods
         }
 
         // Try from request
         String contentType = request.getServletContext().getMimeType(filename);
 
         if (contentType == null) {
-            // Fallback based on file extension
-            if (filename.toLowerCase().endsWith(".pdf")) {
+
+            String lowerFilename = filename.toLowerCase(Locale.ROOT);
+
+            if (lowerFilename.endsWith(".pdf")) {
                 return "application/pdf";
-            } else if (filename.toLowerCase().endsWith(".png")) {
+            } else if (lowerFilename.endsWith(".png")) {
                 return "image/png";
-            } else if (filename.toLowerCase().endsWith(".jpg") || filename.toLowerCase().endsWith(".jpeg")) {
+            } else if (lowerFilename.endsWith(".jpg") || filename.toLowerCase().endsWith(".jpeg")) {
                 return "image/jpeg";
-            } else if (filename.toLowerCase().endsWith(".gif")) {
+            } else if (lowerFilename.endsWith(".gif")) {
                 return "image/gif";
-            } else if (filename.toLowerCase().endsWith(".doc")) {
+            } else if (lowerFilename.endsWith(".doc")) {
                 return "application/msword";
-            } else if (filename.toLowerCase().endsWith(".docx")) {
+            } else if (lowerFilename.endsWith(".docx")) {
                 return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
             }
 
