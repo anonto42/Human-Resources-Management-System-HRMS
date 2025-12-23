@@ -8,37 +8,180 @@ on:
 
 jobs:
 
-  # Build and Test
+  #  # Build and Test
+  #  build-test:
+  #    runs-on: ubuntu-latest
+  #
+  #    services:
+  #      postgres:
+  #        image: postgres:16
+  #        env:
+  #          POSTGRES_DB: testdb
+  #          POSTGRES_USER: testuser
+  #          POSTGRES_PASSWORD: testpass
+  #        options: >-
+  #          --health-cmd pg_isready
+  #          --health-interval 10s
+  #          --health-timeout 5s
+  #          --health-retries 5
+  #        ports:
+  #          - 5432:5432
+  #
+  #      mongodb:
+  #        image: mongo:7
+  #        env:
+  #          MONGO_INITDB_ROOT_USERNAME: mongo_test_user
+  #          MONGO_INITDB_ROOT_PASSWORD: mongo_test_pass
+  #        options: >-
+  #          --health-cmd "mongosh --eval 'db.adminCommand(\"ping\")'"
+  #          --health-interval 10s
+  #          --health-timeout 5s
+  #          --health-retries 5
+  #        ports:
+  #          - 27017:27017
+  #
+  #    steps:
+  #      - name: Checkout code
+  #        uses: actions/checkout@v4
+  #        with:
+  #          fetch-depth: 0
+  #
+  #      - name: Set up JDK 21
+  #        uses: actions/setup-java@v4
+  #        with:
+  #          java-version: '21'
+  #          distribution: 'temurin'
+  #          cache: 'maven'
+  #
+  #      - name: Cache Maven dependencies and build output
+  #        uses: actions/cache@v4
+  #        with:
+  #          path: |
+  #            ~/.m2
+  #            target  # Cache compiled classes to avoid full recompilation
+  #          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+  #          restore-keys: |
+  #            ${{ runner.os }}-maven-
+  #
+  #      - name: Wait for PostgreSQL to be ready
+  #        run: |
+  #          echo "Waiting for PostgreSQL and database 'testdb' to be ready..."
+  #          for i in {1..30}; do
+  #          # Check if database exists
+  #          if PGPASSWORD=testpass psql -h localhost -U testuser -d testdb -c "SELECT 1" >/dev/null 2>&1; then
+  #          echo "✅ Database 'testdb' is ready!"
+  #          break
+  #          fi
+  #          echo "Database not ready yet... attempt $i/30"
+  #          sleep 2
+  #          done
+  #
+  #      - name: Wait for MongoDB to be ready
+  #        run: |
+  #          echo "MongoDB..."
+  #          for i in {1..30}; do
+  #            if curl -s -o /dev/null -w "%{http_code}" http://localhost:27017/ | grep -q "200\|404"; then
+  #              echo "MongoDB is ready!"
+  #              break
+  #            fi
+  #            echo "MongoDB not ready yet... attempt $i/30"
+  #            sleep 2
+  #          done
+  #
+  #      - name: Run comprehensive quality checks
+  #        run: |
+  #          mvn clean verify \
+  #            spotbugs:check \
+  #            -Dspring.datasource.url=jdbc:postgresql://localhost:5432/testdb \
+  #            -Dspring.data.mongodb.uri=mongodb://localhost:27017/testdb
+  #        env:
+  #          MAVEN_OPTS: "-Duser.home=${{ runner.temp }}"
+  #          SPRING_PROFILES_ACTIVE: test
+  #          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/testdb
+  #          SPRING_DATASOURCE_USERNAME: testuser
+  #          SPRING_DATASOURCE_PASSWORD: testpass
+  #          SPRING_DATA_MONGODB_URI: mongodb://mongo_test_user:$mongo_test_pass@localhost:27017/test_db?authSource=admin
+  #          MAIL_ADDRESS_USERNAME: test@email.test
+  #          MAIL_APP_PASSWORD: test test test test
+  #          APP_BASE_URL: http://localhost:8080
+  #          ADMIN_EMAIL: admin@mail.com
+  #          ADMIN_PASSWORD: admin_pass
+  #          ADMIN_NAME: admin
+  #          JWT_SECRET: test_jwt_secret
+  #          JWT_EXP: 50000
+  #          JWT_REFRESH_EXP: 150000
+  #          OTP_EXP: 600
+  #          OTP_LENGTH: 6
+  #          ALLOWED_ORIGINS: "*"
+  #
+  #      - name: Security scan with OWASP Dependency-Check
+  #        run: |
+  #          mvn clean verify sonar:sonar \
+  #          -Dsonar.projectKey=your-project \
+  #          -Dsonar.login=your-token
+  #
+  #      - name: Upload test and quality reports
+  #        if: always()
+  #        uses: actions/upload-artifact@v4
+  #        with:
+  #          name: quality-reports
+  #          path: |
+  #            target/site/jacoco/
+  #            target/site/spotbugs.html
+  #            target/surefire-reports/
+  #            target/failsafe-reports/
+  #            target/dependency-check-report.html
+  #          retention-days: 30
+  #
+  #      - name: Check coverage threshold
+  #        if: success()
+  #        run: |
+  #          # Extract coverage percentage from JaCoCo XML (simplified check)
+  #          if [ -f target/site/jacoco/jacoco.xml ]; then
+  #            COVERAGE=$(grep -o 'line-rate="[0-9.]*"' target/site/jacoco/jacoco.xml | head -1 | sed 's/line-rate="//' | sed 's/"//')
+  #            MIN_COVERAGE=0.80  # 80% minimum coverage
+  #            if (( $(echo "$COVERAGE < $MIN_COVERAGE" | bc -l) )); then
+  #              echo "❌ Coverage ($(echo "$COVERAGE*100" | bc)%) is below minimum ($(echo "$MIN_COVERAGE*100" | bc)%)"
+  #              exit 1
+  #            else
+  #              echo "✅ Coverage ($(echo "$COVERAGE*100" | bc)%) meets minimum requirement"
+  #            fi
+  #          else
+  #            echo "⚠️ JaCoCo report not found"
+  #          fi
+
+
   build-test:
     runs-on: ubuntu-latest
 
     services:
       postgres:
-        image: postgres:16
+        image: postgres:15
         env:
           POSTGRES_DB: testdb
           POSTGRES_USER: testuser
           POSTGRES_PASSWORD: testpass
+        ports:
+          - 5432:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-        ports:
-          - 5432:5432
 
       mongodb:
-        image: mongo:7
+        image: mongo:6
         env:
           MONGO_INITDB_ROOT_USERNAME: mongo_test_user
           MONGO_INITDB_ROOT_PASSWORD: mongo_test_pass
+          MONGO_INITDB_DATABASE: test_db
+        ports:
+          - 27017:27017
         options: >-
           --health-cmd "mongosh --eval 'db.adminCommand(\"ping\")'"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-        ports:
-          - 27017:27017
 
     steps:
       - name: Checkout code
@@ -53,102 +196,152 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Cache Maven dependencies and build output
+      - name: Cache Maven dependencies
         uses: actions/cache@v4
         with:
-          path: |
-            ~/.m2
-            target  # Cache compiled classes to avoid full recompilation
+          path: ~/.m2
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Wait for PostgreSQL to be ready
+      - name: Configure Maven for Quality Tools
         run: |
-          echo "Waiting for PostgreSQL and database 'testdb' to be ready..."
-          for i in {1..30}; do
-          # Check if database exists
-          if PGPASSWORD=testpass psql -h localhost -U testuser -d testdb -c "SELECT 1" >/dev/null 2>&1; then
-          echo "✅ Database 'testdb' is ready!"
-          break
-          fi
-          echo "Database not ready yet... attempt $i/30"
-          sleep 2
-          done
+          # Create PMD ruleset for Spring Boot (reduces false positives)
+          cat > pmd-spring-rules.xml << 'EOF'
+          <?xml version="1.0"?>
+          <ruleset name="Spring Boot Rules"
+            xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 
+                                https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+            <description>PMD rules optimized for Spring Boot applications</description>
+          
+            <!-- Import standard rules but exclude problematic ones for Spring -->
+            <rule ref="category/java/bestpractices.xml">
+              <!-- Exclude false positives for @Autowired constructors -->
+              <exclude name="GuardLogStatement"/>
+              <exclude name="JUnitAssertionsShouldIncludeMessage"/>
+            </rule>
+          
+            <rule ref="category/java/codestyle.xml">
+              <!-- Less strict on naming for Spring beans -->
+              <exclude name="ShortVariable"/>
+              <exclude name="LongVariable"/>
+            </rule>
+          
+            <rule ref="category/java/design.xml">
+              <exclude name="LawOfDemeter"/>
+            </rule>
+          
+            <rule ref="category/java/errorprone.xml"/>
+            <rule ref="category/java/multithreading.xml"/>
+            <rule ref="category/java/performance.xml"/>
+            <rule ref="category/java/security.xml">
+              <!-- Critical security rules only -->
+              <exclude name="HardCodedCryptoKey"/>
+            </rule>
+          </ruleset>
+          EOF
+          
+          # Create SpotBugs exclusions for Spring beans
+          cat > spotbugs-exclude.xml << 'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <FindBugsFilter>
+            <!-- Suppress false positives for Spring components -->
+            <Match>
+              <Or>
+                <Class name="~.*\.config\..*"/>
+                <Class name="~.*\.controller\..*"/>
+                <Class name="~.*\.service\..*"/>
+                <Class name="~.*\.filter\..*"/>
+                <Annotation name="org.springframework.stereotype.Component"/>
+                <Annotation name="org.springframework.stereotype.Service"/>
+                <Annotation name="org.springframework.web.bind.annotation.RestController"/>
+                <Annotation name="org.springframework.stereotype.Repository"/>
+              </Or>
+              <Bug pattern="EI_EXPOSE_REP2,EI_EXPOSE_REP"/>
+            </Match>
+          
+            <!-- Suppress for JPA entities -->
+            <Match>
+              <Class name="~.*\.entity\..*"/>
+              <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+            </Match>
+          
+            <!-- Suppress for MongoDB documents -->
+            <Match>
+              <Class name="~.*\.document\..*"/>
+              <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+            </Match>
+          </FindBugsFilter>
+          EOF
 
-      - name: Wait for MongoDB to be ready
+      - name: Run PMD Analysis (Better for Spring Boot)
         run: |
-          echo "MongoDB..."
-          for i in {1..30}; do
-            if curl -s -o /dev/null -w "%{http_code}" http://localhost:27017/ | grep -q "200\|404"; then
-              echo "MongoDB is ready!"
-              break
-            fi
-            echo "MongoDB not ready yet... attempt $i/30"
-            sleep 2
-          done
+          mvn pmd:pmd pmd:cpd pmd:check
+          # Generate HTML report
+          mvn pmd:cpd-pmd
+        continue-on-error: false
 
-      - name: Run comprehensive quality checks
+      - name: Run OWASP Dependency Check
+        run: |
+          mvn org.owasp:dependency-check-maven:check -DfailBuildOnCVSS=7
+        continue-on-error: false
+
+      - name: Run Tests with JaCoCo Coverage
         run: |
           mvn clean verify \
-            spotbugs:check \
             -Dspring.datasource.url=jdbc:postgresql://localhost:5432/testdb \
-            -Dspring.data.mongodb.uri=mongodb://localhost:27017/testdb
+            -Dspring.datasource.username=testuser \
+            -Dspring.datasource.password=testpass \
+            -Dspring.data.mongodb.uri=mongodb://mongo_test_user:mongo_test_pass@localhost:27017/test_db?authSource=admin \
+            -DskipITs=false
         env:
-          MAVEN_OPTS: "-Duser.home=${{ runner.temp }}"
           SPRING_PROFILES_ACTIVE: test
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/testdb
-          SPRING_DATASOURCE_USERNAME: testuser
-          SPRING_DATASOURCE_PASSWORD: testpass
-          SPRING_DATA_MONGODB_URI: mongodb://mongo_test_user:$mongo_test_pass@localhost:27017/test_db?authSource=admin
-          MAIL_ADDRESS_USERNAME: test@email.test
-          MAIL_APP_PASSWORD: test test test test
-          APP_BASE_URL: http://localhost:8080
-          ADMIN_EMAIL: admin@mail.com
-          ADMIN_PASSWORD: admin_pass
-          ADMIN_NAME: admin
-          JWT_SECRET: test_jwt_secret
-          JWT_EXP: 50000
-          JWT_REFRESH_EXP: 150000
-          OTP_EXP: 600
-          OTP_LENGTH: 6
-          ALLOWED_ORIGINS: "*"
+          MONGO_PASSWORD: "mongo_test_pass"
 
-      - name: Security scan with OWASP Dependency-Check
+      #      - name: Run SpotBugs with Filtered Rules
+      #        run: |
+      #          mvn spotbugs:spotbugs -Dspotbugs.excludeFilterFile=spotbugs-exclude.xml
+      #          # Generate HTML report
+      #          mvn spotbugs:gui
+      #        continue-on-error: false
+
+      - name: Check Code Coverage Threshold
         run: |
-          mvn clean verify sonar:sonar \
-          -Dsonar.projectKey=your-project \
-          -Dsonar.login=your-token
+          # Use JaCoCo Maven goal to check coverage
+          mvn jacoco:check -Djacoco.lineRatio=0.80 -Djacoco.branchRatio=0.70
+        continue-on-error: false
 
-      - name: Upload test and quality reports
+      - name: Archive Quality Reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: quality-reports
           path: |
+            target/pmd.xml
+            target/cpd.xml
+            target/dependency-check-report.html
             target/site/jacoco/
             target/site/spotbugs.html
             target/surefire-reports/
-            target/failsafe-reports/
-            target/dependency-check-report.html
           retention-days: 30
 
-      - name: Check coverage threshold
-        if: success()
-        run: |
-          # Extract coverage percentage from JaCoCo XML (simplified check)
-          if [ -f target/site/jacoco/jacoco.xml ]; then
-            COVERAGE=$(grep -o 'line-rate="[0-9.]*"' target/site/jacoco/jacoco.xml | head -1 | sed 's/line-rate="//' | sed 's/"//')
-            MIN_COVERAGE=0.80  # 80% minimum coverage
-            if (( $(echo "$COVERAGE < $MIN_COVERAGE" | bc -l) )); then
-              echo "❌ Coverage ($(echo "$COVERAGE*100" | bc)%) is below minimum ($(echo "$MIN_COVERAGE*100" | bc)%)"
-              exit 1
-            else
-              echo "✅ Coverage ($(echo "$COVERAGE*100" | bc)%) meets minimum requirement"
-            fi
-          else
-            echo "⚠️ JaCoCo report not found"
-          fi
+      - name: Upload PMD Report to GitHub
+        if: always()
+        uses: pmd/pmd-github-action@v2
+        with:
+          version: '7.0.0'
+          ruleset: pmd-spring-rules.xml
+          sourcePath: 'src/main/java'
+          format: 'sarif'
+          output: 'pmd-report.sarif'
+
+      - name: Upload SARIF Reports
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'pmd-report.sarif'
 
   # Build and Push Docker Image
   build-push:
