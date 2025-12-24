@@ -1,17 +1,16 @@
 package com.hrmf.hrms_backend.controller.basic;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/api/v1/home")
 public class HomeController {
 
-    @GetMapping
-    public ResponseEntity<String> home() {
-        String template = "<!DOCTYPE html>\n" +
+    @GetMapping("/status")
+    public String home() {
+        return "<!DOCTYPE html>\n" +
                 "<html lang=\"en\">\n" +
                 "<head>\n" +
                 "  <meta charset=\"UTF-8\"/>\n" +
@@ -105,7 +104,5 @@ public class HomeController {
                 "  </script>\n" +
                 "</body>\n" +
                 "</html>";
-
-        return ResponseEntity.ok(template);
     }
 }
